@@ -1,3 +1,5 @@
+import os
+import sys
 from typing import List
 from yandex_music import Playlist
 from yandex_music.client import Client
@@ -8,7 +10,9 @@ from yandex_music.utils.difference import Difference
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
-client = Client.from_credentials('**', '***')
+params = [sys.argv[1], sys.argv[2]]
+
+client = Client.from_credentials(params[0], params[1])
 # print(client)
 
 listType = [
