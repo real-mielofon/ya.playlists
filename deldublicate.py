@@ -23,9 +23,11 @@ for pl in fullPlayLists:
     uniqueTracks = set()
     diff = Difference()
     first = -1
+    deleted = 0
     for i, track in enumerate(tracks):
         if track.track.id in uniqueTracks:
             #удалить
+            deleted+=1
             if first < 0:
                 first = i
         else:
@@ -37,3 +39,4 @@ for pl in fullPlayLists:
         diff.add_delete(first, len(tracks))
 
     client.users_playlists_change(pl.kind, diff.to_json(), pl.revision)
+    print("pl: %10s (%10s) - tracks: %3d deleted: %3d"%(pl.title, datetime.datetime.fromisoformat(pl.modified).strftime('%d/%m/#%Y'), pl.track_count, deleted))  # .encode().decode('cp1251')
