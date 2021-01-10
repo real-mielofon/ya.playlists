@@ -25,8 +25,7 @@ params = [sys.argv[1], sys.argv[2]]
 client = Client.from_credentials(params[0], params[1])
 
 #listType = ['PlayListDaily','PlayListMissed', 'PlayListPremiere', 'PlayListDejavu', 'PlayListFamily']
-listType = [
-#    'PlayListDaily#20201219','PlayListDaily#20201220','PlayListDaily#20201221','PlayListDaily#20201222','PlayListDaily#20201223','PlayListDaily#20201224','PlayListDaily#20201225','PlayListDaily#20201226','PlayListDaily#20201227','PlayListDaily#20201228','PlayListDaily#20201229','PlayListDaily#20201230','PlayListDejavu#20201126','PlayListDejavu#20201203','PlayListDejavu#20201210','PlayListDejavu#20201217','PlayListDejavu#20201224','PlayListFamily#20201128','PlayListFamily#20201205','PlayListFamily#20201212','PlayListFamily#20201219','PlayListFamily#20201226','PlayListMissed#20201201','PlayListMissed#20201208','PlayListMissed#20201215','PlayListMissed#20201222','PlayListMissed#20201229','PlayListPremiere#20201127','PlayListPremiere#20201204','PlayListPremiere#20201211','PlayListPremiere#20201218','PlayListPremiere#20201225',
+listName = [
 'PlayListFamily#20210109',
 'PlayListDaily#20210109',
 'PlayListPremiere#20210108',
@@ -47,8 +46,8 @@ listType = [
 'PlayListDaily#20201230',
 ]
 allPlaylists = client.usersPlaylistsList()
-#fullPlayLists = [pl for pl in allPlaylists]
-fullPlayLists = [pl for pl in allPlaylists if pl.title in listType]
+
+fullPlayLists = [pl for pl in allPlaylists if pl.title in listName]
 
 
 
@@ -101,9 +100,6 @@ for pl in fullPlayLists:
         os.makedirs(dirName, exist_ok=True)
 
         trackFileName = f'{dirName}\\{i+1:02d}-{trackName}.mp3'
-        trackFileNameOld = f'{dirName}\\{trackName}.mp3'
-        if os.path.isfile(trackFileNameOld) :
-            os.rename(trackFileNameOld, trackFileName)
 
         if not os.path.isfile(trackFileName) :
             print("%3d  %s" % (i+1, trackFileName))
