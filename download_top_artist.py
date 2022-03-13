@@ -17,11 +17,7 @@ params = [sys.argv[1], sys.argv[2]]
 
 client = Client.from_credentials(params[0], params[1])
 
-listName = sys.argv[3:]
-allPlaylists = client.usersPlaylistsList()
-
-fullPlayLists = [pl for pl in allPlaylists if pl.title in listName]
-
+listArtists = sys.argv[3:]
 
 def slugify(value):
     """
@@ -43,24 +39,28 @@ def slugify(value):
 
 uniqueTracks = set()
 
-for pl in fullPlayLists:
-    tracks = pl.fetch_tracks()
-    print("pl: %10s (%10s) - tracks: %3d" % (
-        pl.title, datetime.datetime.fromisoformat(pl.modified).strftime('%d/%m/#%Y'),
-        pl.track_count))  # .encode().decode('cp1251')
-    for i, shorttrack in enumerate(tracks):
-        track = shorttrack.track
+for artistName in listArtists:
+
+    artistSearch = client.search(artistName, type_='artist')
+    if artistSearch.artists.total <= 0:
+        exit(-1)
+
+    artist = artistSearch.artists.results[0]
+    tracks = artist.getTracks(page_size=20).tracks
+
+    print("Artist: %s - tracks: %3d" % (
+        artist.name, len(tracks)))
+    for i, track in enumerate(tracks):
         if not track.available:
             continue
 
         arTitle = ','.join([ar.name for ar in track.artists])
-        dirName = '.\\a\\' + pl.title
+        dirName = '.\\a\\' + artist.name
         trackName = arTitle + ' - ' + track.title
         trackName = slugify(trackName).replace("/", "_").replace("\\", "_").replace("\'", "_")
         trackName = trackName.replace("\"", "_").replace("?", "_")
         trackName = trackName.replace("|", "_")
         trackName = trackName.replace(":", "_")
-        trackName = trackName.replace("!", "_")
         trackName = trackName.replace("*", "_")
         trackName = trackName[:120]
 
@@ -92,8 +92,8 @@ for pl in fullPlayLists:
             # Picture
             # 'APIC': APIC(encoding=3, text=cover_filename, data=open(cover_filename, 'rb').read())
         })
+        file.save()
 
-        file.save(v1=2, v2_version=3)
 #        else:
 #            # print("%3d  %s file exist!" % (i+1, trackFileName))
 #    client.users_playlists_change(pl.kind, diff.to_json(), pl.revision)
